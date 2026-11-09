@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Deed — Licensed Data for Vertical AI</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">D</span>
+      <div>
+        <h1>Deed</h1>
+        <p>Licensed data for vertical AI</p>
+      </div>
+    </div>
+    <span class="badge">DEMO</span>
+  </header>
+
+  <section class="stats" id="stats">
+    <div class="stat"><span>Requests</span><strong id="stat-requests">0</strong></div>
+    <div class="stat"><span>Submissions</span><strong id="stat-submissions">0</strong></div>
+    <div class="stat"><span>Accepted</span><strong id="stat-accepted">0</strong></div>
+    <div class="stat"><span>GMV</span><strong id="stat-gmv">₩0</strong></div>
+    <div class="stat"><span>Creator paid</span><strong id="stat-creator">₩0</strong></div>
+    <div class="stat"><span>Platform revenue</span><strong id="stat-platform">₩0</strong></div>
+  </section>
+
+  <main class="page">
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Buyer: post a data request</h2>
+          <p class="muted">Demand first. A request has a spec, a rate, rights, and a deadline.</p>
+        </div>
+      </div>
+      <form id="request-form">
+        <div class="grid">
+          <label>Buyer
+            <input id="buyer" value="K-Beauty AI" />
+          </label>
+          <label>Title
+            <input id="title" value="Korean skincare reviews + photos" />
+          </label>
+          <label>Domain
+            <input id="domain" value="beauty" />
+          </label>
+          <label>Quantity
+            <input id="quantity" type="number" min="1" value="1000" />
+          </label>
+          <label>Unit price (KRW)
+            <input id="unit-price" type="number" min="1" value="500" />
+          </label>
+          <label>Deadline
+            <input id="deadline" type="date" value="2026-12-01" />
+          </label>
+        </div>
+        <label>Spec
+          <textarea id="spec" rows="2">1,000 reviews with a face photo, natural light, 1080px+, consent attached</textarea>
+        </label>
+        <label>Rights
+          <input id="rights" value="AI training, 2 years, global, no resale" />
+        </label>
+        <button type="submit" class="primary">Post request</button>
+      </form>
+      <p id="error" class="error" hidden></p>
+    </section>
+
+    <div class="main-grid">
+      <section class="card">
+        <h2>Open requests</h2>
+        <p class="muted">Pick a request to submit data or license it.</p>
+        <div id="request-list" class="request-list"></div>
+      </section>
+
+      <section class="card" id="detail-card">
+        <div id="detail-empty" class="empty">No request selected.</div>
+        <div id="detail" hidden>
+          <div class="detail-head">
+            <div>
+              <h2 id="detail-title">—</h2>
+              <p class="muted" id="detail-meta">—</p>
+            </div>
+            <span id="detail-status" class="status-pill">OPEN</span>
+          </div>
+          <p id="detail-spec" class="spec"></p>
+          <div class="kv">
+            <div><span>Rate</span><strong id="detail-rate">—</strong></div>
+            <div><span>Quantity</span><strong id="detail-qty">—</strong></div>
+            <div><span>Accepted</span><strong id="detail-accepted">—</strong></div>
+            <div><span>Rights</span><strong id="detail-rights">—</strong></div>
+          </div>
+
+          <h3>Submissions</h3>
+          <div id="submissions" class="submissions"></div>
+
+          <div id="submit-box">
+            <h3>Creator: submit data</h3>
+            <form id="submit-form">
+              <div class="grid">
+                <label>Creator
+                  <input id="creator" value="Mina K." />
+                </label>
+                <label>File name
+                  <input id="file-name" value="mina_001.jpg" />
+                </label>
+              </div>
+              <label>Note (consent, context)
+                <input id="note" value="front-facing, natural light, consent attached" />
+              </label>
+              <button type="submit" class="secondary">Submit data</button>
+            </form>
+          </div>
+
+          <div class="license-box">
+            <button id="license" class="primary">License dataset</button>
+            <p class="muted small">Licenses all accepted submissions. Creator gets 60%, platform 40%.</p>
+            <div id="license-result" class="license-result" hidden></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card ledger-card">
+      <div class="card-head">
+        <div>
+          <h2>Payout ledger</h2>
+          <p class="muted">Double-entry. Client cash, creator payable, platform revenue.</p>
+        </div>
+        <div id="balance" class="balance">—</div>
+      </div>
+      <div class="ledger-grid">
+        <div>
+          <h3>Accounts</h3>
+          <table class="ledger">
+            <thead><tr><th>Account</th><th class="num">Debit</th><th class="num">Credit</th></tr></thead>
+            <tbody id="accounts"></tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Journal entries</h3>
+          <div id="entries" class="entries"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Deed demo · zero dependencies · SQLite</span>
+    <span>Simulated QC and payouts. No real money.</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
