@@ -55,16 +55,38 @@ Today they choose between expensive vendors, risky scraping, and slow in-house c
 
 **No token. No user-to-user trading. No upload-first lottery.**
 
+### 3.1 Two supply modes
+
+| Mode | Who starts | Flow | Payment |
+|---|---|---|---|
+| **Request mode** | Buyer | request → submit → QC → accept → license | on license |
+| **Open catalog** | Creator | upload any type → QC → list → buyer licenses | on license |
+
+**Open catalog is not a lottery.** The creator sets a price and license scope; buyers filter by type, domain, QC, and price. Payment happens only when a buyer licenses the data. The creator can delist future use at any time.
+
+### 3.2 Data types
+
+| Type | Examples | QC focus |
+|---|---|---|
+| **Image** | K-beauty photos, product shots, medical images | resolution, framing, duplicates, faces/PII |
+| **Text** | reviews, dialogues, legal/clinical notes | language, toxicity, PII, duplicates |
+| **Audio / Voice** | read speech, conversational speech, accents | noise, duration, speaker consent |
+| **Video** | demonstrations, procedures, gestures | resolution, consent, faces |
+| **Annotations** | labels, bounding boxes, preferences | consistency, inter-annotator agreement |
+| **Document** | contracts, forms, receipts | OCR quality, PII, rights |
+
 ---
 
 ## 4. Pricing
 
 | Item | Price | Notes |
 |---|---|---|
-| Data license | per-unit or per-dataset | set by the buyer's request |
-| Creator share | 50–70% of net license revenue | paid in KRW/fiat |
+| Data license | per-unit or per-dataset | request price or creator-set catalog price |
+| Creator share | 50–70% of net license revenue | paid in KRW/fiat **only when licensed** |
 | Platform take | 30–40% | QC, rights, sales, payouts |
 | Enterprise | annual contract | custom datasets, API |
+
+**Listing is free.** There is no guaranteed income. A creator is paid when a buyer licenses the data; if it does not sell, the creator can delist.
 
 **Example:** 1,000 photos at ₩500 → ₩500,000. Creator 60% = ₩300,000; platform 40% = ₩200,000; QC/payment cost ₩45,000; contribution ₩155,000.
 
@@ -97,6 +119,8 @@ Today they choose between expensive vendors, risky scraping, and slow in-house c
 | Buyer repeat | 30% in 90 days |
 | Take rate | 30–40% |
 | Gross margin | 25–35% |
+| Catalog listings | 300 in 90 days |
+| Listing-to-license conversion | 10%+ |
 | Data GMV | $100k in 6 months |
 
 ---

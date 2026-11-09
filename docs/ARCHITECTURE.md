@@ -35,6 +35,7 @@ flowchart TB
 |---|---|
 | Request | domain, spec, quantity, quality bar, rights, budget, deadline |
 | Submission | creator, file metadata, consent, status |
+| Asset / catalog | self-upload, data type, price, license scope, status |
 | QC | quality score, duplicate check, PII/illegal-content scan, human review |
 | License | dataset assembly, license terms, provenance bundle |
 | Payout | creator share, tax withholding, ledger |
@@ -52,6 +53,8 @@ flowchart TB
 | `submission` | id, request_id, creator_id, file_key, sha256, note, qc_score, status |
 | `consent` | id, submission_id, subject, purpose, scope, expires_at |
 | `license` | id, request_id, buyer_id, terms, fee, status |
+| `asset` | id, creator_id, data_type, title, domain, file_key, qc_score, price, status, licensed_by |
+| `asset_license` | id, asset_id, buyer_id, terms, fee, status |
 | `payout` | id, creator_id, license_id, gross, share, tax, net, status |
 | `ledger_entry` | id, source_type, source_id, created_at |
 | `posting` | id, entry_id, account, debit, credit, currency |
@@ -59,6 +62,8 @@ flowchart TB
 
 **Invariants**
 - A submission cannot be `ACCEPTED` without a `consent` record and QC pass.
+- An `asset` cannot be `LISTED` without a consent record and QC pass.
+- An asset license cannot be issued unless the asset is `LISTED`.
 - A license cannot be issued without at least one accepted submission.
 - A payout cannot exceed net license revenue.
 - Every journal entry balances.
@@ -76,8 +81,28 @@ flowchart TB
 | POST | `/api/submissions/{id}/accept` | platform accepts |
 | POST | `/api/submissions/{id}/reject` | platform rejects |
 | POST | `/api/requests/{id}/license` | buyer licenses dataset; payouts |
+| POST | `/api/assets` | creator uploads a self-serve asset |
+| GET | `/api/assets` | open catalog (filter by type/domain) |
+| GET | `/api/assets/{id}` | asset detail |
+| POST | `/api/assets/{id}/license` | buyer licenses asset; payout |
 | GET | `/api/ledger` | ledger summary |
 | GET | `/api/stats` | GMV, payouts, take |
+
+### Upload asset (open catalog)
+
+```json
+{
+  "creator": "Mina K.",
+  "title": "Korean skincare photo set",
+  "data_type": "image",
+  "domain": "beauty",
+  "description": "front-facing, natural light, consent attached",
+  "file_name": "mina_set_01.jpg",
+  "price_krw": 500
+}
+```
+
+`data_type` is one of `image`, `text`, `audio`, `video`, `annotations`, `document`.
 
 ### Create request
 
@@ -132,7 +157,9 @@ upload → hash → duplicate check → PII/illegal scan → quality score → h
 5. Payout: creator share (50–70%) minus tax; platform keeps 30–40%.
 6. Creator receives KRW/fiat; receipt and tax documents issued.
 
-**Example:** 1,000 units × ₩500 = ₩500,000. Creator 60% = ₩300,000; platform 40% = ₩200,000; QC/payment cost ₩45,000; contribution ₩155,000.
+**Example (request):** 1,000 units × ₩500 = ₩500,000. Creator 60% = ₩300,000; platform 40% = ₩200,000; QC/payment cost ₩45,000; contribution ₩155,000.
+
+**Example (open catalog):** one image asset at ₩500. Creator 60% = ₩300; platform 40% = ₩200. Listing is free; payment happens only when a buyer licenses it.
 
 ---
 

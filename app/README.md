@@ -12,13 +12,19 @@ Open <http://127.0.0.1:8000>.
 
 ## Demo flow
 
-1. **Post a request** (buyer): "Korean skincare reviews + photos", 1,000 units, ₩500/unit.
+### Open catalog (self-serve)
+
+1. **Upload** an asset: creator, title, data type (image/text/audio/video/annotations/document), domain, price, description.
+2. **QC** runs; the asset is `LISTED` in the catalog.
+3. **License** the asset as a buyer. The server computes creator 60%, platform 40%, and writes ledger postings.
+4. The asset becomes `LICENSED`; the creator can delist future use.
+
+### Request mode (buyer pull)
+
+1. **Post a request**: "Korean skincare reviews + photos", 1,000 units, ₩500/unit.
 2. **Submit data** (creator): `mina_001.jpg`, note "front-facing, natural light, consent attached".
 3. **Accept** the submission. QC score is shown; the platform decides.
-4. **License dataset**. The server computes:
-   - gross = accepted units × unit price
-   - creator 60%, platform 40%
-   - double-entry ledger postings
+4. **License dataset**: gross = accepted units × unit price; creator 60%, platform 40%.
 5. Check the **payout ledger**: total debits = total credits.
 
 ## API
@@ -33,8 +39,28 @@ Open <http://127.0.0.1:8000>.
 | POST | `/api/submissions/{id}/accept` | accept submission |
 | POST | `/api/submissions/{id}/reject` | reject submission |
 | POST | `/api/requests/{id}/license` | license dataset + payouts |
+| POST | `/api/assets` | creator uploads a self-serve asset |
+| GET | `/api/assets` | open catalog; filter by `type` / `domain` |
+| GET | `/api/assets/{id}` | asset detail |
+| POST | `/api/assets/{id}/license` | license an asset + payout |
 | GET | `/api/ledger` | ledger summary |
 | GET | `/api/stats` | GMV, creator paid, platform revenue |
+
+### Upload asset (open catalog)
+
+```json
+{
+  "creator": "Mina K.",
+  "title": "Korean skincare photo set",
+  "data_type": "image",
+  "domain": "beauty",
+  "description": "front-facing, natural light, consent attached",
+  "file_name": "mina_set_01.jpg",
+  "price_krw": 500
+}
+```
+
+`data_type` is one of `image`, `text`, `audio`, `video`, `annotations`, `document`.
 
 ### Create request
 
@@ -71,8 +97,9 @@ Starts the server on port 8011 with a temporary database, creates a request, sub
 
 ## What this demonstrates
 
-- Demand-pulled request → submission → QC → license → payout.
-- Acceptance workflow with QC score.
+- **Two supply modes**: self-serve open catalog and buyer-pulled requests.
+- **License at upload, paid on use**: listing is free; payout happens when licensed.
+- Request → submission → QC → accept → license → payout.
 - Revenue share: 60% creator / 40% platform.
 - Double-entry ledger: client cash, creator payable, platform revenue.
 

@@ -18,7 +18,7 @@ import sqlite3
 import uuid
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -85,6 +85,22 @@ def init_db():
                 debit REAL NOT NULL DEFAULT 0,
                 credit REAL NOT NULL DEFAULT 0,
                 currency TEXT NOT NULL DEFAULT 'KRW'
+            );
+
+            CREATE TABLE IF NOT EXISTS assets (
+                id TEXT PRIMARY KEY,
+                creator TEXT NOT NULL,
+                title TEXT NOT NULL,
+                data_type TEXT NOT NULL,
+                domain TEXT NOT NULL,
+                description TEXT,
+                file_name TEXT,
+                qc_score REAL NOT NULL,
+                price_krw REAL NOT NULL,
+                status TEXT NOT NULL DEFAULT 'LISTED',
+                created_at TEXT NOT NULL,
+                licensed_at TEXT,
+                licensed_by TEXT
             );
             """
         )
@@ -306,12 +322,125 @@ def ledger_summary():
         }
 
 
+def create_asset(payload):
+    creator = (payload.get("creator") or "").strip()
+    title = (payload.get("title") or "").strip()
+    data_type = (payload.get("data_type") or "").strip().lower()
+    domain = (payload.get("domain") or "").strip()
+    description = (payload.get("description") or "").strip()
+    file_name = (payload.get("file_name") or "").strip()
+    price = float(payload.get("price_krw") or 0)
+
+    allowed = {"image", "text", "audio", "video", "annotations", "document"}
+    if not creator or not title or not data_type or not domain:
+        raise ValueError("creator, title, data_type, and domain are required")
+    if data_type not in allowed:
+        raise ValueError("data_type must be one of: " + ", ".join(sorted(allowed)))
+    if price <= 0:
+        raise ValueError("price_krw must be positive")
+
+    asset_id = "ast_" + uuid.uuid4().hex[:12]
+    score = qc_score(file_name, description)
+    with connect() as conn:
+        conn.execute(
+            """
+            INSERT INTO assets
+            (id, creator, title, data_type, domain, description, file_name, qc_score, price_krw, status, created_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?)
+            """,
+            (asset_id, creator, title, data_type, domain, description, file_name, score, price, "LISTED", now_iso()),
+        )
+        conn.commit()
+    return get_asset(asset_id)
+
+
+def list_assets(data_type=None, domain=None):
+    sql = "SELECT * FROM assets WHERE 1=1"
+    params = []
+    if data_type:
+        sql += " AND data_type = ?"
+        params.append(data_type)
+    if domain:
+        sql += " AND domain = ?"
+        params.append(domain)
+    sql += " ORDER BY created_at DESC LIMIT 100"
+    with connect() as conn:
+        rows = conn.execute(sql, params).fetchall()
+        return [row_to_dict(r) for r in rows]
+
+
+def get_asset(asset_id):
+    with connect() as conn:
+        row = conn.execute("SELECT * FROM assets WHERE id = ?", (asset_id,)).fetchone()
+        if not row:
+            raise ValueError("asset not found")
+        return row_to_dict(row)
+
+
+def license_asset(asset_id, buyer):
+    with connect() as conn:
+        asset = conn.execute("SELECT * FROM assets WHERE id = ?", (asset_id,)).fetchone()
+        if not asset:
+            raise ValueError("asset not found")
+        if asset["status"] != "LISTED":
+            raise ValueError("asset is not listed")
+
+        gross = r2(asset["price_krw"])
+        creator_share = r2(gross * 0.60)
+        platform_share = r2(gross - creator_share)
+
+        add_entry(
+            conn,
+            "asset_license",
+            asset_id,
+            [
+                ("client_cash", gross, 0),
+                ("creator_payable", 0, creator_share),
+                ("platform_revenue", 0, platform_share),
+            ],
+        )
+        add_entry(
+            conn,
+            "asset_payout",
+            asset_id,
+            [
+                ("creator_payable", creator_share, 0),
+                ("creator_cash", 0, creator_share),
+            ],
+        )
+        add_entry(
+            conn,
+            "asset_sweep",
+            asset_id,
+            [
+                ("operating_cash", platform_share, 0),
+                ("client_cash", 0, platform_share),
+            ],
+        )
+        conn.execute(
+            "UPDATE assets SET status = 'LICENSED', licensed_at = ?, licensed_by = ? WHERE id = ?",
+            (now_iso(), buyer, asset_id),
+        )
+        conn.commit()
+
+    return {
+        "asset_id": asset_id,
+        "buyer": buyer,
+        "gross_krw": gross,
+        "creator_share_krw": creator_share,
+        "platform_share_krw": platform_share,
+    }
+
+
 def stats():
     with connect() as conn:
         requests_count = conn.execute("SELECT COUNT(*) AS c FROM requests").fetchone()["c"]
         submissions_count = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
         accepted_count = conn.execute("SELECT COUNT(*) AS c FROM submissions WHERE status = 'ACCEPTED'").fetchone()["c"]
         licensed = conn.execute("SELECT COUNT(*) AS c FROM requests WHERE status = 'LICENSED'").fetchone()["c"]
+        assets_count = conn.execute("SELECT COUNT(*) AS c FROM assets").fetchone()["c"]
+        listed_assets = conn.execute("SELECT COUNT(*) AS c FROM assets WHERE status = 'LISTED'").fetchone()["c"]
+        licensed_assets = conn.execute("SELECT COUNT(*) AS c FROM assets WHERE status = 'LICENSED'").fetchone()["c"]
         gross = conn.execute("SELECT COALESCE(SUM(debit), 0) AS s FROM postings WHERE account = 'client_cash'").fetchone()["s"]
         creator_paid = conn.execute("SELECT COALESCE(SUM(debit), 0) AS s FROM postings WHERE account = 'creator_payable'").fetchone()["s"]
         platform = conn.execute("SELECT COALESCE(SUM(credit), 0) AS s FROM postings WHERE account = 'platform_revenue'").fetchone()["s"]
@@ -320,6 +449,9 @@ def stats():
             "submissions": submissions_count,
             "accepted": accepted_count,
             "licensed_requests": licensed,
+            "assets": assets_count,
+            "listed_assets": listed_assets,
+            "licensed_assets": licensed_assets,
             "gross_krw": r2(gross),
             "creator_paid_krw": r2(creator_paid),
             "platform_revenue_krw": r2(platform),
@@ -370,10 +502,25 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        path = urlparse(self.path).path
+        parsed = urlparse(self.path)
+        path = parsed.path
+        query = parse_qs(parsed.query)
         try:
             if path == "/api/health":
                 self._send_json(200, {"ok": True, "service": "deed-demo", "time": now_iso()})
+            elif path == "/api/assets":
+                self._send_json(
+                    200,
+                    {
+                        "assets": list_assets(
+                            query.get("type", [None])[0],
+                            query.get("domain", [None])[0],
+                        )
+                    },
+                )
+            elif path.startswith("/api/assets/"):
+                asset_id = path.split("/")[3]
+                self._send_json(200, get_asset(asset_id))
             elif path == "/api/requests":
                 self._send_json(200, {"requests": list_requests()})
             elif path.startswith("/api/requests/"):
@@ -394,7 +541,12 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         try:
             payload = self._read_json()
-            if path == "/api/requests":
+            if path == "/api/assets":
+                self._send_json(201, create_asset(payload))
+            elif path.startswith("/api/assets/") and path.endswith("/license"):
+                asset_id = path.split("/")[3]
+                self._send_json(200, license_asset(asset_id, payload.get("buyer", "Buyer")))
+            elif path == "/api/requests":
                 self._send_json(201, create_request(payload))
             elif path.startswith("/api/requests/") and path.endswith("/submissions"):
                 request_id = path.split("/")[3]

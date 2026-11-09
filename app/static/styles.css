@@ -68,7 +68,7 @@ p { margin: 0; }
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   max-width: 1180px;
   margin: 18px auto 0;
@@ -129,7 +129,7 @@ label {
   margin-bottom: 8px;
 }
 
-input, textarea {
+input, textarea, select {
   width: 100%;
   padding: 9px 11px;
   border: 1px solid var(--line);
@@ -142,6 +142,7 @@ input, textarea {
 }
 
 textarea { resize: vertical; }
+select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #64716c 50%), linear-gradient(135deg, #64716c 50%, transparent 50%); background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 28px; }
 input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12); }
 
 button {
@@ -252,6 +253,49 @@ button {
 .accept { background: #ecfdf3; color: var(--good); }
 .reject { background: #fef3f2; color: var(--bad); }
 
+.catalog {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.asset-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fbfdfc;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.asset-head { display: flex; justify-content: space-between; align-items: center; }
+.asset-card h4 { margin: 2px 0 0; font-size: 14px; }
+.asset-card p { color: var(--muted); font-size: 12px; }
+.asset-desc { min-height: 32px; }
+
+.type-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+.asset-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.asset-foot strong { font-size: 15px; font-variant-numeric: tabular-nums; }
+.license-asset { width: 100%; margin-top: 6px; }
+
 .license-box { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
 
 .license-result {
@@ -318,7 +362,7 @@ table.ledger .num { text-align: right; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 980px) {
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .main-grid, .ledger-grid { grid-template-columns: 1fr; }
+  .main-grid, .ledger-grid, .catalog { grid-template-columns: 1fr; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 

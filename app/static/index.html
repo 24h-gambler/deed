@@ -22,12 +22,57 @@
     <div class="stat"><span>Requests</span><strong id="stat-requests">0</strong></div>
     <div class="stat"><span>Submissions</span><strong id="stat-submissions">0</strong></div>
     <div class="stat"><span>Accepted</span><strong id="stat-accepted">0</strong></div>
+    <div class="stat"><span>Assets</span><strong id="stat-assets">0</strong></div>
     <div class="stat"><span>GMV</span><strong id="stat-gmv">₩0</strong></div>
     <div class="stat"><span>Creator paid</span><strong id="stat-creator">₩0</strong></div>
     <div class="stat"><span>Platform revenue</span><strong id="stat-platform">₩0</strong></div>
   </section>
 
   <main class="page">
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Open catalog: upload data</h2>
+          <p class="muted">No buyer request needed. List any data type; you get paid when it is licensed.</p>
+        </div>
+        <span class="badge">SELF-SERVE</span>
+      </div>
+      <form id="asset-form">
+        <div class="grid">
+          <label>Creator
+            <input id="asset-creator" value="Mina K." />
+          </label>
+          <label>Title
+            <input id="asset-title" value="Korean skincare photo set" />
+          </label>
+          <label>Data type
+            <select id="asset-type">
+              <option value="image">Image</option>
+              <option value="text">Text</option>
+              <option value="audio">Audio / Voice</option>
+              <option value="video">Video</option>
+              <option value="annotations">Annotations</option>
+              <option value="document">Document</option>
+            </select>
+          </label>
+          <label>Domain
+            <input id="asset-domain" value="beauty" />
+          </label>
+          <label>Price (KRW)
+            <input id="asset-price" type="number" min="1" value="500" />
+          </label>
+          <label>File name
+            <input id="asset-file" value="mina_set_01.jpg" />
+          </label>
+        </div>
+        <label>Description
+          <input id="asset-description" value="front-facing, natural light, consent attached" />
+        </label>
+        <button type="submit" class="primary">List data</button>
+      </form>
+      <div id="catalog" class="catalog"></div>
+    </section>
+
     <section class="card">
       <div class="card-head">
         <div>

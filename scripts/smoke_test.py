@@ -106,6 +106,33 @@ def main():
         assert licensed["creator_share_krw"] == 300, licensed
         assert licensed["platform_share_krw"] == 200, licensed
 
+        asset = request(
+            "POST",
+            "/api/assets",
+            {
+                "creator": "Mina K.",
+                "title": "Korean skincare photo set",
+                "data_type": "image",
+                "domain": "beauty",
+                "description": "front-facing, natural light, consent attached",
+                "file_name": "mina_set_01.jpg",
+                "price_krw": 500,
+            },
+        )
+        assert asset["status"] == "LISTED", asset
+
+        catalog = request("GET", "/api/assets")
+        assert len(catalog["assets"]) == 1, catalog
+
+        asset_license = request(
+            "POST",
+            "/api/assets/%s/license" % asset["id"],
+            {"buyer": "Catalog Buyer"},
+        )
+        assert asset_license["gross_krw"] == 500, asset_license
+        assert asset_license["creator_share_krw"] == 300, asset_license
+        assert asset_license["platform_share_krw"] == 200, asset_license
+
         ledger = request("GET", "/api/ledger")
         assert ledger["balanced"], ledger
         assert abs(ledger["total_debit"] - ledger["total_credit"]) < 0.01, ledger
@@ -115,15 +142,20 @@ def main():
         assert stats["submissions"] == 2, stats
         assert stats["accepted"] == 1, stats
         assert stats["licensed_requests"] == 1, stats
-        assert stats["gross_krw"] == 500, stats
-        assert stats["creator_paid_krw"] == 300, stats
-        assert stats["platform_revenue_krw"] == 200, stats
+        assert stats["assets"] == 1, stats
+        assert stats["licensed_assets"] == 1, stats
+        assert stats["gross_krw"] == 1000, stats
+        assert stats["creator_paid_krw"] == 600, stats
+        assert stats["platform_revenue_krw"] == 400, stats
 
         print("PASS")
         print("request=%s submissions=2 accepted=1" % request_id)
         print(
-            "license gross=%s creator=%s platform=%s"
+            "request license gross=%s creator=%s platform=%s"
             % (licensed["gross_krw"], licensed["creator_share_krw"], licensed["platform_share_krw"])
+        )
+        print(
+            "asset=%s gross=%s catalog=1" % (asset["id"], asset_license["gross_krw"])
         )
         print(
             "ledger debit=%s credit=%s balanced=%s"

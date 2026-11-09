@@ -33,7 +33,16 @@ flowchart LR
   D -->|provenance| B
 ```
 
-**Demand-pulled, not upload-first.** Every submission is against a real request with a budget, a spec, and a buyer.
+**Demand-pulled, not upload-first.** Every submission is against a real request with a budget, a spec, and a buyer. Creators can also list data in the open catalog; it is paid only when licensed.
+
+### 2.1 Two supply modes
+
+| Mode | Who starts | Flow | Payment |
+|---|---|---|---|
+| **Request mode** | Buyer | request → submit → QC → accept → license | on license |
+| **Open catalog** | Creator | upload any type → QC → list → buyer licenses | on license |
+
+**License at upload, paid on use.** In the open catalog, the creator grants Deed a non-exclusive, sublicensable license at upload, keeps ownership, and can delist future use. No payment until a buyer licenses the data.
 
 ---
 
@@ -53,8 +62,8 @@ flowchart LR
 
 | Generic data marketplace | Deed |
 |---|---|
-| Upload anything, hope it sells | Buyer request with a budget |
-| Unclear rights | License, consent, provenance, deletion |
+| No rules, upload anything | Request-backed or catalog listing with a price and license scope |
+| Unclear rights | License at upload, consent, provenance, deletion |
 | Low-quality dump | AI + human QC; acceptance rate is a metric |
 | Users trade data with each other | No user-to-user trading; B2B license only |
 | Token/price speculation | No token; fiat/KRW payout |

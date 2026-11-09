@@ -4,7 +4,7 @@
 **One-liner** The licensed data supply layer for vertical AI.  
 **RFS fit** Vertical Foundation Models / Own Your Intelligence — high-quality, rights-cleared, vertical-specific data is the bottleneck.
 
-**Two-line summary** Deed is the demand-pulled data marketplace for vertical AI: buyers post a data request, creators submit rights-cleared data, and get paid when it is licensed. No token, no user-to-user trading, no data dump.
+**Two-line summary** Deed is the licensed data marketplace for vertical AI: buyers post requests or browse an open catalog, creators list any data type, and creators get paid when the data is licensed. No token, no user-to-user trading, no data dump.
 
 ---
 
@@ -12,14 +12,16 @@
 
 A vertical AI lab needs 1,000 Korean skincare reviews with face photos, consent, and provenance. Today it scrapes (risky), hires a general vendor (slow, expensive), or collects in-house (does not scale).
 
-Deed flips the process:
-1. The buyer posts a **Data Request** with spec, quantity, quality bar, rights, and budget.
-2. Creators submit data against the request.
+Deed flips the process with **two supply modes**:
+1. **Request mode**: the buyer posts a **Data Request** with spec, quantity, quality bar, rights, and budget; creators submit against it.
+2. **Open catalog**: a creator uploads any data type — image, text, audio, video, annotations, document — sets a price, and lists it.
 3. Deed runs AI + human QC: quality, duplicates, PII, illegal content, consent.
-4. Deed licenses the accepted dataset to the buyer.
-5. Creators get 50–70% of net license revenue in KRW/fiat.
+4. Deed licenses the dataset or asset to the buyer.
+5. Creators get 50–70% of net license revenue in KRW/fiat **when the data is licensed**.
 
-The buyer gets a clean dataset with provenance. The creator gets paid without giving up ownership. Deed gets 30–40%.
+**License at upload, paid on use.** Listing is free. The creator grants Deed a non-exclusive, sublicensable license, keeps ownership, and can delist future use. There is no payment until a buyer licenses the data.
+
+The buyer gets clean, varied data with provenance. The creator gets paid without giving up ownership. Deed gets 30–40%.
 
 ---
 
@@ -57,18 +59,19 @@ The data is not scarce. **Clean, licensed, verified supply is.**
 
 ## 4. Solution
 
-**Demand-pulled data licensing.**
+**Demand-pulled requests + an open, rights-cleared catalog.**
 
 | Module | What it does |
 |---|---|
 | **Request** | buyer spec, quantity, quality, rights, budget, deadline |
+| **Catalog** | self-serve upload, data type, price, license scope, QC, listing |
 | **Submission** | creator upload, consent, metadata, hash |
 | **QC** | duplicate, PII, illegal content, quality, human review |
 | **License** | dataset assembly, license terms, provenance bundle |
 | **Payout** | 50–70% revenue share, KRW/fiat, tax withholding |
 | **Ledger** | double-entry, client funds, creator payable, platform revenue |
 
-No token. No user-to-user trading. No coercion.
+No token. No user-to-user trading. No coercion. **No payment at upload.**
 
 ---
 

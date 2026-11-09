@@ -15,6 +15,29 @@
 
 ---
 
+## 1.1 Upload license (open catalog)
+
+When a creator lists data in the open catalog, the creator grants Deed a **non-exclusive, sublicensable license** to license the data to buyers. The creator retains ownership.
+
+| Term | Default |
+|---|---|
+| Grant | Non-exclusive, sublicensable to buyers |
+| Purpose | AI training, evaluation, fine-tuning |
+| Term | 2 years, renewable |
+| Territory | Global |
+| Ownership | Creator retains ownership; no assignment |
+| Compensation | 50–70% of net license revenue **when licensed** |
+| Upfront payment | None; listing is free |
+| Withdrawal | Creator may delist future use; existing licenses survive |
+| Deletion | Per contract and law |
+| Transparency | Creator sees licensing status; buyer identity may be aggregated |
+
+**No payment at upload.** A listing is not a sale. The creator is paid only when a buyer licenses the data. This must be disclosed clearly at upload.
+
+**No blanket rights.** Deed may not use the data for its own products, assign ownership, or license beyond the stated purpose. The license is limited to marketing, sublicensing, and collecting payment.
+
+---
+
 ## 2. Data categories
 
 | Category | Policy |
@@ -78,6 +101,16 @@ By submitting, the creator warrants:
 - Handle deletion/withdrawal requests.
 - Report illegal content.
 - Maintain a takedown process.
+
+---
+
+## 6.1 Payment on use
+
+- Listing is free. There is no guaranteed income.
+- Payment is triggered by a buyer license (or a usage report, if the parties agree to usage-based royalties).
+- Creator share: 50–70% of net license revenue.
+- Platform share: 30–40%.
+- If a listing does not sell, the creator receives nothing — and can delist at any time.
 
 ---
 

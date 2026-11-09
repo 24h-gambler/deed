@@ -12,7 +12,7 @@
 | 2 | Creator discovery | 30 creator/expert interviews | 10 willing to license |
 | 3 | Domain pick | one domain (voice / K-beauty / expert) | buyer + creator supply match |
 | 4 | Legal | license, consent, request terms | counsel sign-off |
-| 5 | First request | buyer request live, rate card | 20 submissions |
+| 5 | First request + catalog | buyer request live, 50 catalog listings, rate card | 20 submissions + 50 listings |
 | 6 | QC | manual + AI QC, acceptance | 60%+ acceptance |
 | 7 | First license | dataset delivered, creator paid | revenue, zero disputes |
 | 8 | Second buyer | second request, second domain test | 2 paid requests |
@@ -29,7 +29,7 @@
 
 | Quarter | Product | Commercial | Metrics |
 |---|---|---|---|
-| Q1 | request, submission, manual QC, payout | 3 buyers, 100 creators | 1,000 units, first revenue |
+| Q1 | request, open catalog, submission, manual QC, payout | 3 buyers, 100 creators, 300 listings | 1,000 units, first revenue |
 | Q2 | self-serve, AI QC, ledger | 10 buyers, 500 creators | $100k GMV |
 | Q3 | license automation, second domain | 20 buyers, enterprise | $300k GMV |
 | Q4 | API, multi-domain, global creators | 50 buyers | $600k GMV |
@@ -68,6 +68,8 @@
 | Buyers with paid request | 3 |
 | Creators submitting | 100 |
 | Accepted data units | 1,000 |
+| Catalog listings | 300 |
+| Listing-to-license conversion | 10%+ |
 | Acceptance rate | 60%+ |
 | Time to deliver | <2 weeks |
 | Creator repeat | 30% |

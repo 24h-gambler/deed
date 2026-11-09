@@ -39,9 +39,42 @@ async function loadStats() {
   $("stat-requests").textContent = s.requests;
   $("stat-submissions").textContent = s.submissions;
   $("stat-accepted").textContent = s.accepted;
+  $("stat-assets").textContent = s.assets;
   $("stat-gmv").textContent = money(s.gross_krw);
   $("stat-creator").textContent = money(s.creator_paid_krw);
   $("stat-platform").textContent = money(s.platform_revenue_krw);
+}
+
+async function loadAssets() {
+  const data = await api("/api/assets");
+  const box = $("catalog");
+  if (!data.assets.length) {
+    box.innerHTML = `<div class="empty">No data listed yet. Upload the first one.</div>`;
+    return;
+  }
+  box.innerHTML = data.assets
+    .map(
+      (a) => `
+      <div class="asset-card">
+        <div class="asset-head">
+          <span class="type-badge">${escapeHtml(a.data_type)}</span>
+          <span class="score ${a.qc_score < 0.8 ? "low" : ""}">QC ${a.qc_score.toFixed(2)}</span>
+        </div>
+        <h4>${escapeHtml(a.title)}</h4>
+        <p>${escapeHtml(a.creator)} · ${escapeHtml(a.domain)}</p>
+        <p class="asset-desc">${escapeHtml(a.description || "")}</p>
+        <div class="asset-foot">
+          <strong>${money(a.price_krw)}</strong>
+          <span class="status-pill ${a.status === "LICENSED" ? "licensed" : ""}">${escapeHtml(a.status)}</span>
+        </div>
+        ${
+          a.status === "LISTED"
+            ? `<button class="secondary license-asset" data-asset="${a.id}">License</button>`
+            : ""
+        }
+      </div>`
+    )
+    .join("");
 }
 
 async function loadRequests() {
@@ -165,6 +198,46 @@ async function loadLedger() {
     .join("");
 }
 
+$("asset-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  setError("");
+  try {
+    await api("/api/assets", {
+      method: "POST",
+      body: JSON.stringify({
+        creator: $("asset-creator").value,
+        title: $("asset-title").value,
+        data_type: $("asset-type").value,
+        domain: $("asset-domain").value,
+        description: $("asset-description").value,
+        file_name: $("asset-file").value,
+        price_krw: Number($("asset-price").value),
+      }),
+    });
+    await loadAssets();
+    await loadStats();
+  } catch (error) {
+    setError(error.message);
+  }
+});
+
+$("catalog").addEventListener("click", async (event) => {
+  const button = event.target.closest("button[data-asset]");
+  if (!button) return;
+  setError("");
+  try {
+    await api(`/api/assets/${button.dataset.asset}/license`, {
+      method: "POST",
+      body: JSON.stringify({ buyer: "Catalog Buyer" }),
+    });
+    await loadAssets();
+    await loadStats();
+    await loadLedger();
+  } catch (error) {
+    setError(error.message);
+  }
+});
+
 $("request-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   setError("");
@@ -258,6 +331,7 @@ $("license").addEventListener("click", async () => {
 (async function init() {
   try {
     await loadStats();
+    await loadAssets();
     await loadRequests();
     await loadLedger();
   } catch (error) {

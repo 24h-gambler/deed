@@ -2,7 +2,7 @@
 
 **The licensed data supply layer for vertical AI.**
 
-> Buyers post a data request. Creators submit rights-cleared data. Deed verifies quality and rights, licenses the dataset, and pays creators a revenue share. No token. No user-to-user trading. No coercion.
+> Buyers post a data request or browse the open catalog. Creators upload any supported data type, keep ownership, and get paid when the data is licensed. No token. No user-to-user trading. No coercion.
 
 ## The problem
 
@@ -15,13 +15,25 @@ Creators and experts have the data — Korean voice, K-beauty images, clinical n
 
 ## The solution
 
-**Demand-pulled data licensing.**
+**Two supply modes, one license engine.**
 
-1. A buyer posts a **Data Request**: domain, spec, quantity, quality bar, rights, budget, deadline.
-2. Creators submit data against the request. AI + human QC checks quality, duplicates, PII, and rights.
-3. Deed assembles the accepted data into a dataset and licenses it to the buyer.
-4. Creators get paid a **revenue share** (50–70%) in KRW/fiat.
-5. The buyer gets provenance, consent records, and a license — not a data dump.
+**1. Request mode (B2B pull).**
+- A buyer posts a **Data Request**: domain, spec, quantity, quality bar, rights, budget, deadline.
+- Creators submit data against the request.
+- AI + human QC checks quality, duplicates, PII, and rights.
+- Deed assembles the accepted data into a dataset and licenses it to the buyer.
+
+**2. Open catalog (self-serve push).**
+- A creator uploads any supported data type: image, text, audio/voice, video, annotations, or document.
+- The creator sets a price and the license scope.
+- Deed runs QC and lists the data in the open catalog.
+- Buyers browse, filter, and license what they need.
+
+**3. License at upload, paid on use.**
+- At upload, the creator grants Deed a **non-exclusive, sublicensable license** to license the data to buyers.
+- The creator keeps ownership and can delist future use.
+- **No payment until a buyer licenses the data.** Then the creator gets 50–70% of net license revenue; Deed keeps 30–40%.
+- The buyer gets provenance, consent records, and a defined license — not a data dump.
 
 ## Why now
 
@@ -44,10 +56,11 @@ python app/server.py
 
 Open <http://127.0.0.1:8000>.
 
-1. Create a data request (e.g., "Korean skincare reviews + photos").
-2. Submit data as a creator.
-3. Accept a submission; license the dataset.
-4. See the creator payout and platform ledger.
+1. **Open catalog**: upload a Korean skincare photo set (image), set a price, and license it.
+2. **Request mode**: post a data request, submit data as a creator, accept a submission, and license the dataset.
+3. See the creator payout and the double-entry ledger.
+
+The demo has both modes: a self-serve listing and a buyer request.
 
 Smoke test:
 
@@ -72,11 +85,12 @@ Pre-seed. Blueprint v1.0. First domain: Korean voice / K-beauty / expert annotat
 
 ## Principles
 
-1. **Demand first.** No random uploads; only requests with a buyer and a budget.
-2. **Rights first.** License, not assignment; consent, provenance, deletion.
-3. **Creators paid.** 50–70% of net license revenue, in KRW/fiat.
-4. **No token.** No speculation, no user-to-user trading, no price appreciation.
-5. **QC is the product.** Quality and rights are why buyers pay.
+1. **Demand + catalog.** B2B requests for certainty; open catalog for variety.
+2. **Rights first.** License at upload, not assignment; consent, provenance, deletion; creator can delist future use.
+3. **Pay on use.** Listing is free; creators are paid when a buyer licenses the data.
+4. **Creators paid.** 50–70% of net license revenue, in KRW/fiat.
+5. **No token.** No speculation, no user-to-user trading, no price appreciation.
+6. **QC is the product.** Quality and rights are why buyers pay.
 
 ---
 
